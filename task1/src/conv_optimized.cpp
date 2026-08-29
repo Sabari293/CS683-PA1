@@ -9,5 +9,5 @@
 void conv_optimized(const float* in, float* out, const float* ker,
                     int H, int W, int K) {
     // TODO(student): replace this placeholder with your best combined implementation.
-    conv_naive(in, out, ker, H, W, K);
+    conv_simd(in,out,ker,H,W,K);
 }
