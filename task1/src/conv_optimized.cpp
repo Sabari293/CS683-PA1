@@ -13,41 +13,15 @@ void conv_optimized(const float* in, float* out, const float* ker,
     const int in_stride = W + 2 * p;  // padded row stride
 
     for (int oy = 0; oy < 8*(H/8); ++oy) {
-        for (int ox = 0; ox < 8*(W/8); ox+=8) {
-            _mm256_store_ps(&out[oy*W+ox],_mm256_setzero_ps());
-            _mm256_store_ps(&out[(oy+1)*W+ox],_mm256_setzero_ps());
-            _mm256_store_ps(&out[(oy+2)*W+ox],_mm256_setzero_ps());
-            _mm256_store_ps(&out[(oy+3)*W+ox],_mm256_setzero_ps());
-            oy+=4;
-            _mm256_store_ps(&out[oy*W+ox],_mm256_setzero_ps());
-            _mm256_store_ps(&out[(oy+1)*W+ox],_mm256_setzero_ps());
-            _mm256_store_ps(&out[(oy+2)*W+ox],_mm256_setzero_ps());
-            _mm256_store_ps(&out[(oy+3)*W+ox],_mm256_setzero_ps());
-            oy-=4;
-        }
-        for(int ox=8*(W/8);ox<W;ox+=1){
-            out[oy*W+ox]=0.0f;
-            out[(oy+1)*W+ox]=0.0f;
-            out[(oy+2)*W+ox]=0.0f;
-            out[(oy+3)*W+ox]=0.0f;
-            oy+=4;
-            out[oy*W+ox]=0.0f;
-            out[(oy+1)*W+ox]=0.0f;
-            out[(oy+2)*W+ox]=0.0f;
-            out[(oy+3)*W+ox]=0.0f;
-            oy-=4;
-        }
         for(int ox=0;ox<8*(W/8);ox+=8){
-            __m256 acc0=_mm256_load_ps(&out[oy*W+ox]);
-            __m256 acc1=_mm256_load_ps(&out[(oy+1)*W+ox]);
-            __m256 acc2=_mm256_load_ps(&out[(oy+2)*W+ox]);
-            __m256 acc3=_mm256_load_ps(&out[(oy+3)*W+ox]);
-            oy+=4;
-            __m256 acc4=_mm256_load_ps(&out[oy*W+ox]);
-            __m256 acc5=_mm256_load_ps(&out[(oy+1)*W+ox]);
-            __m256 acc6=_mm256_load_ps(&out[(oy+2)*W+ox]);
-            __m256 acc7=_mm256_load_ps(&out[(oy+3)*W+ox]);
-            oy-=4;
+            __m256 acc0 = _mm256_setzero_ps();
+            __m256 acc1 = _mm256_setzero_ps();
+            __m256 acc2 = _mm256_setzero_ps();
+            __m256 acc3 = _mm256_setzero_ps();
+            __m256 acc4 = _mm256_setzero_ps();
+            __m256 acc5 = _mm256_setzero_ps();
+            __m256 acc6 = _mm256_setzero_ps();
+            __m256 acc7 = _mm256_setzero_ps();
 
             for(int ky=0;ky<K;++ky){
                 for(int kx=0;kx<K;++kx){
@@ -87,6 +61,16 @@ void conv_optimized(const float* in, float* out, const float* ker,
             _mm256_storeu_ps(&out[(oy+6)*W+ox],acc6);
             _mm256_storeu_ps(&out[(oy+7)*W+ox],acc7);
         }
+        for (int ox = 8*(W/8); ox < W; ++ox) {
+            float acc = 0.0f;
+            for (int ky = 0; ky < K; ++ky) {
+                for (int kx = 0; kx < K; ++kx) {
+                    acc += in[(oy + ky) * in_stride + (ox + kx)] * ker[ky * K + kx];
+                }
+            }
+            out[oy * W + ox] = acc;
+        }
+        
         
         oy+=7;
     }
@@ -108,6 +92,15 @@ void conv_optimized(const float* in, float* out, const float* ker,
                 _mm256_storeu_ps(&out[oy*W+ox],acc);
                 
             }
+        }
+        for (int ox = 8*(W/8); ox < W; ++ox) {
+            float acc = 0.0f;
+            for (int ky = 0; ky < K; ++ky) {
+                for (int kx = 0; kx < K; ++kx) {
+                    acc += in[(oy + ky) * in_stride + (ox + kx)] * ker[ky * K + kx];
+                }
+            }
+            out[oy * W + ox] = acc;
         }
     }
 }
