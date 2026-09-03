@@ -19,22 +19,20 @@ void conv_simd(const float* in, float* out, const float* ker,
             __m256 acc=_mm256_setzero_ps();
             for (int ky = 0; ky < K; ++ky) {    
                 for (int kx = 0; kx < K; ++kx) {
-                    __m256 in1=_mm256_load_ps(&in[(oy + ky) * in_stride + (ox + kx)]);
+                    __m256 in1=_mm256_loadu_ps(&in[(oy + ky) * in_stride + (ox + kx)]);
                     __m256 ker1=_mm256_set1_ps(ker[ky*K+kx]);
                     acc=_mm256_fmadd_ps(in1,ker1,acc);
                 }
-                _mm256_storeu_ps(&out[oy*W+ox],acc);
-                
             }
+            _mm256_storeu_ps(&out[oy*W+ox],acc);
         }
-        for (int ox = 8*(W/8); ox < W; ++ox) {
-            float acc = 0.0f;
-            for (int ky = 0; ky < K; ++ky) {
-                for (int kx = 0; kx < K; ++kx) {
-                    acc += in[(oy + ky) * in_stride + (ox + kx)] * ker[ky * K + kx];
+        for (int ky = 0; ky < K; ++ky) {
+            for (int kx = 0; kx < K; ++kx) {
+                float k = ker[ky * K + kx];
+                for (int ox = 8*(W/8); ox < W; ++ox) {
+                    out[oy * W + ox] += in[(oy + ky) * in_stride + (ox + kx)] * k;
                 }
             }
-            out[oy * W + ox] = acc;
         }
     }
 }
