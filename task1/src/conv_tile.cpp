@@ -7,11 +7,12 @@ void conv_tile(const float* in, float* out, const float* ker,
     // TODO(student): replace this placeholder with your tiled/blocked implementation.
     const int p = K / 2;
     const int in_stride = W + 2 * p;  // padded row stride
-    int T=144;
-    for(int oys = 0;oys<H ;oys+=T){
-        for(int oxs = 0;oxs<W;oxs+=T){
-            int oye = oys+T>H?H:oys+T;
-            int oxe = oxs+T>W?W:oxs+T;
+    int T_H=32;
+    int T_W=256;
+    for(int oys = 0;oys<H ;oys+=T_H){
+        for(int oxs = 0;oxs<W;oxs+=T_W){
+            int oye = oys+T_H>H?H:oys+T_H;
+            int oxe = oxs+T_W>W?W:oxs+T_W;
             for (int oy = oys; oy < oye; ++oy) {    
                 for (int ox = oxs; ox < oxe; ++ox) {
                     float acc = 0.0f;
