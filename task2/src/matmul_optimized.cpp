@@ -31,7 +31,7 @@ void matmul_optimized(const float* A, const float* B, float* C,
     int tileW = 128;
     int kend = 8*(K/ 8);
     int t=3;
-    std::cout<<"M = "<<M<<"N = "<<N<<"K = "<<K<<" ,TileH = "<<tileH<<" ,TileW = "<<tileW<<" ,prefetch_dist = "<<prefetch_dist<<" ,prefetch_level: "<<t<<std::endl;
+    //std::cout<<"M = "<<M<<"N = "<<N<<"K = "<<K<<" ,TileH = "<<tileH<<" ,TileW = "<<tileW<<" ,prefetch_dist = "<<prefetch_dist<<" ,prefetch_level: "<<t<<std::endl;
     for(int ii = 0;ii<M;ii+=tileH){
         int ie = (ii+tileH<M?ii+tileH:M);
         for(int jj = 0;jj<N;jj+=tileW){
