@@ -110,39 +110,26 @@ void matmul_optimized(const float* A, const float* B, float* C,
                     float s11 = sum2561(acc11);
                     float s21 = sum2561(acc12);
                     float s31 = sum2561(acc13);
-                    float s40 = sum2561(acc04);
-                    float s50 = sum2561(acc05);
-                    float s41 = sum2561(acc14);
-                    float s51 = sum2561(acc15);
                     for(;p<K;p++){
                         s00 += (a0[p]*b[p]);
                         s10 += (a1[p]*b[p]);
                         s20 += (a2[p]*b[p]);
                         s30 += (a3[p]*b[p]);
-                        s40 += (a4[p]*b[p]);
-                        s50 += (a5[p]*b[p]);
                         s01 += (a0[p]*b01[p]);
                         s11 += (a1[p]*b01[p]);
                         s21 += (a2[p]*b01[p]);
                         s31 += (a3[p]*b01[p]);
-                        s41 += (a4[p]*b01[p]);
-                        s51 += (a5[p]*b01[p]);
-                        
                     }
                     C[static_cast<long>(i) * ldc + j]=s00;
                     C[static_cast<long>(i+1) * ldc + j]=s10;
                     C[static_cast<long>(i+2) * ldc + j]=s20;
                     C[static_cast<long>(i+3) * ldc + j]=s30;
-                    C[static_cast<long>(i+4) * ldc + j]=s40;
-                    C[static_cast<long>(i+5) * ldc + j]=s50;
                 
                     j++;
                     C[static_cast<long>(i) * ldc + j]=s01;
                     C[static_cast<long>(i+1) * ldc + j]=s11;
                     C[static_cast<long>(i+2) * ldc + j]=s21;
-                    C[static_cast<long>(i+3) * ldc + j]=s31;   
-                    C[static_cast<long>(i+4) * ldc + j]=s41;
-                    C[static_cast<long>(i+5) * ldc + j]=s51;                
+                    C[static_cast<long>(i+3) * ldc + j]=s31;                  
                     
                 }
                 for (int j =jj+ 2*((je-jj)/2); j < je; ++j) {
