@@ -8,7 +8,6 @@
 // real LLM inference via `make llama-demo`.
 
 #include <immintrin.h>
-#include <iostream>
 
 #include "matmul.h"
 
