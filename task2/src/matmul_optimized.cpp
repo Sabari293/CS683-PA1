@@ -8,6 +8,7 @@
 // real LLM inference via `make llama-demo`.
 
 #include <immintrin.h>
+#include <iostream>
 
 #include "matmul.h"
 
@@ -25,7 +26,7 @@ inline float hsum(__m256 v) {
 void matmul_optimized(const float* A, const float* B, float* C,
                       int M, int N, int K, int lda, int ldb, int ldc) {
     // TODO(student): replace this placeholder with your best combined implementation.
-    int prefetch_dist = 80;
+    int prefetch_dist = 64;
     int tileH = 144;
     int tileW = 128;
     int kend = 8*(K/ 8);
